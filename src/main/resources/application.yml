@@ -1,0 +1,19 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtual-host: /
+    username: guest
+    password: guest
+    listener:
+      direct:
+        acknowledge-mode: manual
+  datasource:
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3323/nxsbdy?allowMultiQueries=true&rewriteBatchedStatements=true&serverTimezone=GMT%2B8
+    username: root
+    password: root
