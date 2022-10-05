@@ -4,11 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 
 
 /*
 通用工具类
  */
+@Slf4j
 public class CommonUtils {
 
     /**
@@ -19,6 +21,17 @@ public class CommonUtils {
     public String getTimeString() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String date = format.format(new Date());
+        return date;
+    }
+
+    public String getTimeStringNormal(String pattern) {
+        String date = "";
+        try {
+            SimpleDateFormat format = new SimpleDateFormat(pattern);
+            date = format.format(new Date());
+        } catch (Exception e) {
+            log.error("转换时间错误 + --" + e);
+        }
         return date;
     }
 
