@@ -59,7 +59,7 @@ public class CommonUtils {
     }
 
     /**
-     * String 转 bean
+     * String to bean
      *
      * @param str
      * @param clazz
@@ -79,6 +79,11 @@ public class CommonUtils {
         } else {
             return JSON.toJavaObject(JSON.parseObject(str), clazz);
         }
+    }
+
+    public static void main(String[] args) {
+        String date = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+        System.out.println(date);
     }
 
 }

@@ -26,6 +26,7 @@ public class NormalConsumer {
         log.info(message.toString());
         try {
             log.info("收到消息" + new String(message.getBody()));
+            Thread.sleep(2000);
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
             log.info("消息处理成功！");
         } catch (Exception e) {
@@ -35,7 +36,7 @@ public class NormalConsumer {
         }
     }
 
-    // 监听普通队列
+    // 监听延迟队列
     @RabbitListener(queues = RabbitMQConfig.DELAY_QUEUE_NAME)
     public void delayConsumer(Channel channel, Message message) throws IOException {
         // 业务处理

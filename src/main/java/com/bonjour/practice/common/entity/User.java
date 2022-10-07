@@ -7,5 +7,11 @@ public class User {
 
     private String id;
 
-    private String name;
+    private String nikeName;
+
+    private String phone;
+
+    private String sex;
+
+    private String status;
 }

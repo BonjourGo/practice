@@ -59,6 +59,7 @@ public class RabbitMQConfig {
         return QueueBuilder.durable(DELAY_QUEUE_NAME).build();
     }
 
+    // 绑定延迟队列和交换机
     @Bean
     public Binding bindingDelay(@Qualifier("delayExchange") Exchange exchange, @Qualifier("delayQueue") Queue queue) {
         return BindingBuilder.bind(queue).to(exchange).with(DELAY_ROUTTINGKEY).noargs();
