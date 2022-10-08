@@ -1,19 +1,17 @@
-package com.bonjour.practice.common.entity;
+package com.bonjour.practice.common;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @authur tc
+ * @date 2022/10/8 13:50
+ */
 @Data
-@TableName("user")
-@ApiModel("用户表")
-public class User {
-
-    @TableId("id")
-    private String id;
+@ApiModel("注册dto")
+public class RegisterDTO {
 
     @TableField("nike_name")
     private String nikeName;
@@ -21,17 +19,9 @@ public class User {
     @TableField("phone")
     private String phone;
 
-    @TableField("register_type")
     @ApiModelProperty("注册方式 1 密码 2 手机验证码 3 邮箱")
     private String registerType;
 
-    @TableField("password")
     @ApiModelProperty("密码")
     private String password;
-
-    @TableField("sex")
-    private String sex;
-
-    @TableField("status")
-    private String status;
 }
