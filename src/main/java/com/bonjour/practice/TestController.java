@@ -1,9 +1,12 @@
 package com.bonjour.practice;
 
 import com.bonjour.practice.common.entity.User;
+import com.bonjour.practice.common.mapper.UserMapper;
 import com.bonjour.practice.common.utils.CommonUtils;
 import com.bonjour.practice.rabbitmq.RabbitMQConfig;
 import com.bonjour.practice.rabbitmq.RabbitMQProducer;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
@@ -18,13 +21,24 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/hello")
+@Api("test API")
 public class TestController {
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private RabbitMQProducer rabbitMQProducer;
+
+    @GetMapping("/test")
+    @ApiOperation("/test")
+    public String test() {
+        User user = userMapper.selectById("0001");
+        return CommonUtils.beanToString(user);
+    }
 
     @GetMapping("/hello")
     public String hello() {

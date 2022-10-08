@@ -37,19 +37,19 @@ public class NormalConsumer {
     }
 
     // 监听延迟队列
-    @RabbitListener(queues = RabbitMQConfig.DELAY_QUEUE_NAME)
-    public void delayConsumer(Channel channel, Message message) throws IOException {
-        // 业务处理
-        try {
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
-            String date = format.format(new Date());
-            log.info(date + "收到消息" + new String(message.getBody()));
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-            log.info("消息处理成功！");
-        } catch (Exception e) {
-            // 失败
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
-            log.info("消息处理失败！");
-        }
-    }
+//    @RabbitListener(queues = RabbitMQConfig.DELAY_QUEUE_NAME)
+//    public void delayConsumer(Channel channel, Message message) throws IOException {
+//        // 业务处理
+//        try {
+//            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
+//            String date = format.format(new Date());
+//            log.info(date + "收到消息" + new String(message.getBody()));
+//            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+//            log.info("消息处理成功！");
+//        } catch (Exception e) {
+//            // 失败
+//            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
+//            log.info("消息处理失败！");
+//        }
+//    }
 }
