@@ -14,6 +14,6 @@ spring:
       minIdle: 5
       maxActive: 20
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3323/nxsbdy?allowMultiQueries=true&rewriteBatchedStatements=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/practice?allowMultiQueries=true&rewriteBatchedStatements=true&serverTimezone=GMT%2B8
     username: root
     password: root
