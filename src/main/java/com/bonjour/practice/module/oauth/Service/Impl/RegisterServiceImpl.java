@@ -1,6 +1,6 @@
 package com.bonjour.practice.module.oauth.Service.Impl;
 
-import com.bonjour.practice.common.RegisterDTO;
+import com.bonjour.practice.common.dto.RegisterDTO;
 import com.bonjour.practice.common.entity.User;
 import com.bonjour.practice.common.mapper.UserMapper;
 import com.bonjour.practice.common.service.CommonService;

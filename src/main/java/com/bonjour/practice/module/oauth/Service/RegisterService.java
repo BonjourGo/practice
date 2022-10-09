@@ -1,8 +1,6 @@
 package com.bonjour.practice.module.oauth.Service;
 
-import com.bonjour.practice.common.RegisterDTO;
-import com.bonjour.practice.common.entity.User;
-import org.springframework.stereotype.Service;
+import com.bonjour.practice.common.dto.RegisterDTO;
 
 /**
  * @authur tc

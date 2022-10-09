@@ -1,4 +1,4 @@
-package com.bonjour.practice.common;
+package com.bonjour.practice.common.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;

@@ -1,7 +1,6 @@
 package com.bonjour.practice.module.oauth.controller;
 
-import com.bonjour.practice.common.RegisterDTO;
-import com.bonjour.practice.common.entity.User;
+import com.bonjour.practice.common.dto.RegisterDTO;
 import com.bonjour.practice.common.utils.Result;
 import com.bonjour.practice.module.oauth.Service.RegisterService;
 import io.swagger.annotations.Api;

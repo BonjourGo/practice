@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.alibaba.fastjson.JSON;
+import com.bonjour.practice.common.enums.RegisterTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -84,6 +85,8 @@ public class CommonUtils {
     public static void main(String[] args) {
         String date = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         System.out.println(date);
+        System.out.println(RegisterTypeEnum.账号密码.getKey());
+        System.out.println(RegisterTypeEnum.账号密码.getdesc());
     }
 
 }
