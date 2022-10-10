@@ -26,9 +26,9 @@ public class Product {
     @ApiModelProperty("名称")
     private String name;
 
-    @TableField("desc")
+    @TableField("description")
     @ApiModelProperty("描述")
-    private String desc;
+    private String description;
 
     @TableField("stock")
     @ApiModelProperty("库存")

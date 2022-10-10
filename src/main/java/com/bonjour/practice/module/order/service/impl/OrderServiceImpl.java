@@ -19,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
     private CommonService commonService;
 
     @Autowired
@@ -33,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Product product = commonService.getMapper(ProductMapper.class).selectById(order.getProductId());
         product.setStock(product.getStock() - order.getNumber());
-        commonService.updateAllById(product, ProductMapper.class);
+        productMapper.updateById(product);
         order.setOrderId(RedisUtil.getIncrId("orderId"));
         order.setCreateTime(CommonUtils.getTimeStringNormal("yyyyMMddhhmmssSSS"));
         order.setOrderStatus(OrderStatusEnum.未支付.getKey());

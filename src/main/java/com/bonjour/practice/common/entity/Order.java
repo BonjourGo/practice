@@ -38,7 +38,7 @@ public class Order {
     @ApiModelProperty("支付金额")
     private BigDecimal payMoney;
 
-    @TableField("create_time")
+    @TableField("gen_time")
     @ApiModelProperty("订单创建时间")
     private String createTime;
 

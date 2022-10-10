@@ -9,7 +9,7 @@ CREATE TABLE `order` (
                          `cancel_time` varchar(18) DEFAULT NULL,
                          `number` int(8) DEFAULT NULL,
                          PRIMARY KEY (`order_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 
 
 CREATE TABLE `user` (
@@ -21,4 +21,4 @@ CREATE TABLE `user` (
                         `register_type` varchar(2) DEFAULT NULL COMMENT '注册方式',
                         `password` varchar(255) DEFAULT NULL,
                         PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
