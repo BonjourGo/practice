@@ -6,14 +6,29 @@ spring:
     username: guest
     password: guest
     listener:
-      direct:
-        acknowledge-mode: manual
+      simple:
+        prefetch: 1 # 每次从mq获取的消息数量
+        concurrency: 1 # 每个队列的消费者数量
+        max-concurrency: 1 # 每个队列最大的消费者数量
+        acknowledge-mode: manual # 手动签收
+    connection-timeout: 15000
+    publisher-confirms: true # 发送确认
+    publisher-returns: true # 失败回调
+    template:
+      mandatory: true # 设置为true 消息路由失败通知监听者
   datasource:
     druid:
       initialSize: 5
       minIdle: 5
       maxActive: 20
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/practice?allowMultiQueries=true&rewriteBatchedStatements=true&serverTimezone=GMT%2B8
     username: root
-    password: root
+#    password: root
+    password: root123
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0

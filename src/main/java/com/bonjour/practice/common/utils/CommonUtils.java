@@ -19,13 +19,13 @@ public class CommonUtils {
      *
      * @return
      */
-    public String getTimeString() {
+    public static String getTimeString() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String date = format.format(new Date());
         return date;
     }
 
-    public String getTimeStringNormal(String pattern) {
+    public static String getTimeStringNormal(String pattern) {
         String date = "";
         try {
             SimpleDateFormat format = new SimpleDateFormat(pattern);

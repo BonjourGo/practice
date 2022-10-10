@@ -45,7 +45,7 @@ public class RedisUtil {
      * @param expireTime 超期时间
      * @return 是否获取成功
      */
-    public boolean tryGetDistributedLock(Jedis jedis, String lockKey, String requestId, int expireTime) {
+    public static boolean tryGetDistributedLock(Jedis jedis, String lockKey, String requestId, int expireTime) {
 
         String result = jedis.set(lockKey, requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
 
@@ -62,7 +62,7 @@ public class RedisUtil {
      * @param requestId 请求标识
      * @return 是否释放成功
      */
-    public boolean releaseDistributedLock(Jedis jedis, String lockKey, String requestId) {
+    public static boolean releaseDistributedLock(Jedis jedis, String lockKey, String requestId) {
 
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
         Object result = jedis.eval(script, Collections.singletonList(lockKey), Collections.singletonList(requestId));
@@ -126,7 +126,7 @@ public class RedisUtil {
      * @param keyPrefix
      * @return
      */
-    public String getIncrId(String keyPrefix) {
+    public static String getIncrId(String keyPrefix) {
         // 格式化时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         Date date = new Date();
@@ -159,7 +159,7 @@ public class RedisUtil {
      * @param timeout  过期时间
      * @param timeUnit 时间单位
      */
-    public <T> void setCacheObjectAndExpire(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
+    public static <T> void setCacheObjectAndExpire(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
@@ -169,12 +169,12 @@ public class RedisUtil {
      * @param <T>
      * @return
      */
-    public <T> Object getCacheObject(final String key) {
+    public static <T> Object getCacheObject(final String key) {
         Object result = redisTemplate.opsForValue().get(key);
         return result;
     }
 
-    public boolean isNull(String key) {
+    public static boolean isNull(String key) {
         String b = redisTemplate.opsForValue().get(key).toString();
         if (StringUtils.isBlank(b)) {
             return false;
@@ -189,7 +189,7 @@ public class RedisUtil {
      * @param key
      * @return
      */
-    public Long getIncrLongId(String key) {
+    public static Long getIncrLongId(String key) {
         return (Long) redisTemplate.execute((RedisCallback<Long>) connection -> {
             RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
             byte[] keys = serializer.serialize("sequence:id_" + key);
@@ -203,7 +203,7 @@ public class RedisUtil {
      * @param key redis键
      * @return boolean
      */
-    public boolean deleteObject(final String key) {
+    public static boolean deleteObject(final String key) {
         return redisTemplate.delete(key);
     }
 }
