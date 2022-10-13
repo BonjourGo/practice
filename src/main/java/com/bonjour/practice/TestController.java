@@ -1,8 +1,10 @@
 package com.bonjour.practice;
 
+import com.bonjour.practice.common.annotations.RepeatLimit;
 import com.bonjour.practice.common.entity.User;
 import com.bonjour.practice.common.mapper.UserMapper;
 import com.bonjour.practice.common.utils.CommonUtils;
+import com.bonjour.practice.common.utils.RedisUtil;
 import com.bonjour.practice.rabbitmq.RabbitMQConfig;
 import com.bonjour.practice.rabbitmq.RabbitMQProducer;
 import io.swagger.annotations.Api;
@@ -12,10 +14,12 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,6 +32,12 @@ public class TestController {
     private UserMapper userMapper;
 
     @Autowired
+    private RedisUtil redisUtil;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
@@ -35,7 +45,13 @@ public class TestController {
 
     @GetMapping("/test")
     @ApiOperation("/test")
-    public String test() {
+    @RepeatLimit(timeOut = 5)
+    public String test(HttpServletRequest request) {
+        redisTemplate.opsForValue().set("aaa", "123");
+        System.out.println(redisTemplate.opsForValue().get("aaa"));
+        System.out.println(redisUtil.getIncrLongId("aaa"));
+        System.out.println(redisUtil.getIncrId("bbb"));
+        System.out.println(CommonUtils.getRequestIP(request));
         User user = userMapper.selectById("0001");
         return CommonUtils.beanToString(user);
     }

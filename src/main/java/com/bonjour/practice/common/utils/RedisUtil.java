@@ -9,6 +9,8 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -24,6 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2022/10/8 16:45
  */
 @Slf4j
+@Component
 public class RedisUtil {
 
     private static final String LOCK_SUCCESS = "OK";
@@ -34,8 +37,12 @@ public class RedisUtil {
     @Autowired
     private static RedisTemplate redisTemplate;
 
-    @Autowired
-    private JedisPool jedisPool;
+//    @Autowired
+//    private JedisPool jedisPool;
+
+    public RedisUtil(RedisTemplate redisTemplate) {
+        RedisUtil.redisTemplate = redisTemplate;
+    }
 
     /**
      * 尝试获取分布式锁
@@ -126,18 +133,65 @@ public class RedisUtil {
      * @param keyPrefix
      * @return
      */
-    public static String getIncrId(String keyPrefix) {
+    public String getIncrId(String keyPrefix) {
         // 格式化时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         Date date = new Date();
         String formatDate = simpleDateFormat.format(date);
         // 获取自增
-//        RedisAtomicLong redisAtomicLong = new RedisAtomicLong(formatDate, redisTemplate.getConnectionFactory());
-//        Long incr = redisAtomicLong.incrementAndGet();
+        RedisAtomicLong redisAtomicLong = new RedisAtomicLong(formatDate, redisTemplate.getConnectionFactory());
+        Long incr = redisAtomicLong.incrementAndGet();
         // 自增起始号码
         DecimalFormat decimalFormat = new DecimalFormat("0000000000");
-        String value = decimalFormat.format(123654);
+        String value = decimalFormat.format(incr);
         String id = keyPrefix + formatDate + value;
+        return id;
+    }
+
+    /**
+     *  redis 获得key一定格式自增id
+     * @param
+     * @return
+     */
+    public String getIncrIdString(String key) {
+        // 格式化时间
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        Date date = new Date();
+        String formatDate = simpleDateFormat.format(date);
+        // 获取自增
+        Long incr = (Long) redisTemplate.execute((RedisCallback<Long>) connection -> {
+            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+            byte[] keys = serializer.serialize("sequence:id_" + key);
+            return connection.incr(keys);
+        } );
+        // 自增起始号码
+        DecimalFormat decimalFormat = new DecimalFormat("0000000000");
+        String value = decimalFormat.format(incr);
+        String id = formatDate + value;
+        return id;
+    }
+
+
+    /**
+     *  redis 获得key一定格式自增id 自定义日期格式
+     * @param
+     * @return
+     */
+    public String getIncrIdString(String key, String pattern) {
+        // 格式化时间
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date date = new Date();
+        String formatDate = simpleDateFormat.format(date);
+        // 获取自增
+        Long incr = (Long) redisTemplate.execute((RedisCallback<Long>) connection -> {
+            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+            byte[] keys = serializer.serialize("sequence:id_" + key);
+            return connection.incr(keys);
+        } );
+        // 自增起始号码
+        DecimalFormat decimalFormat = new DecimalFormat("0000000000");
+        String value = decimalFormat.format(incr);
+        String id = formatDate + value;
         return id;
     }
 
@@ -159,7 +213,7 @@ public class RedisUtil {
      * @param timeout  过期时间
      * @param timeUnit 时间单位
      */
-    public static <T> void setCacheObjectAndExpire(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
+    public <T> void setCacheObjectAndExpire(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
@@ -169,12 +223,12 @@ public class RedisUtil {
      * @param <T>
      * @return
      */
-    public static <T> Object getCacheObject(final String key) {
+    public <T> Object getCacheObject(final String key) {
         Object result = redisTemplate.opsForValue().get(key);
         return result;
     }
 
-    public static boolean isNull(String key) {
+    public boolean isNull(String key) {
         String b = redisTemplate.opsForValue().get(key).toString();
         if (StringUtils.isBlank(b)) {
             return false;
@@ -189,7 +243,7 @@ public class RedisUtil {
      * @param key
      * @return
      */
-    public static Long getIncrLongId(String key) {
+    public Long getIncrLongId(String key) {
         return (Long) redisTemplate.execute((RedisCallback<Long>) connection -> {
             RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
             byte[] keys = serializer.serialize("sequence:id_" + key);

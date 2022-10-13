@@ -1,11 +1,16 @@
 package com.bonjour.practice.common.utils;
 
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import com.alibaba.fastjson.JSON;
 import com.bonjour.practice.common.enums.RegisterTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /*
@@ -80,6 +85,37 @@ public class CommonUtils {
         } else {
             return JSON.toJavaObject(JSON.parseObject(str), clazz);
         }
+    }
+
+    public static String getUUID() {
+        return UUID.randomUUID().toString();
+    }
+
+    public static String getRequestIP(HttpServletRequest request) {
+        String ip = null;
+        try {
+            ip = request.getHeader("x-forwarded-for");
+            if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("Proxy-Client-IP");
+            }
+            if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("Proxy-Client-IP");
+            }
+            if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+                ip = InetAddress.getLocalHost().getHostAddress();
+            }
+            if (ip.length() > 15) {
+                if (ip.indexOf(",") > 0) {
+                    ip = ip.substring(0, ip.indexOf(","));
+                }
+            }
+        } catch (Exception e) {
+            ip = "";
+        }
+        return ip;
     }
 
     public static void main(String[] args) {
