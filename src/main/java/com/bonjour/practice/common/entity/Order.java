@@ -38,15 +38,15 @@ public class Order {
     @ApiModelProperty("支付金额")
     private BigDecimal payMoney;
 
-    @TableField("gen_time")
+    @TableField("gendate")
     @ApiModelProperty("订单创建时间")
     private String createTime;
 
-    @TableField("pay_time")
+    @TableField("paydate")
     @ApiModelProperty("订单支付时间")
     private String payTime;
 
-    @TableField("cancel_time")
+    @TableField("canceldate")
     @ApiModelProperty("订单取消时间")
     private String cancelTime;
 }

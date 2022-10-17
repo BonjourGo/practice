@@ -60,7 +60,7 @@ public class TestController {
     public String hello() {
         User user = new User();
         user.setId("cxx");
-        user.setNikeName("cxx");
+        user.setNickName("cxx");
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NORMAL_NAME, "normal.test", "user");
         return "hello";
     }

@@ -1,5 +1,6 @@
 package com.bonjour.practice.module.order.controller;
 
+import com.bonjour.practice.common.annotations.RepeatLimit;
 import com.bonjour.practice.common.entity.Order;
 import com.bonjour.practice.common.utils.Result;
 import com.bonjour.practice.module.order.service.OrderService;
@@ -23,6 +24,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @RepeatLimit(timeOut = 5)
     @PostMapping("/order")
     @ApiOperation("下单")
     public Result order(@RequestBody Order order) {

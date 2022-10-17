@@ -8,6 +8,7 @@ import com.bonjour.practice.common.mapper.ProductMapper;
 import com.bonjour.practice.common.service.CommonService;
 import com.bonjour.practice.common.utils.CommonUtils;
 import com.bonjour.practice.common.utils.RedisUtil;
+import com.bonjour.practice.common.utils.UserUtil;
 import com.bonjour.practice.module.order.service.OrderService;
 import com.bonjour.practice.rabbitmq.RabbitMQConfig;
 import com.bonjour.practice.rabbitmq.RabbitMQProducer;
@@ -40,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
         Product product = commonService.getMapper(ProductMapper.class).selectById(order.getProductId());
         product.setStock(product.getStock() - order.getNumber());
         productMapper.updateById(product);
+        order.setUserId(UserUtil.getUser().getId());
         order.setOrderId(redisUtil.getIncrId("orderId"));
         order.setCreateTime(CommonUtils.getTimeStringNormal("yyyyMMddhhmmssSSS"));
         order.setOrderStatus(OrderStatusEnum.未支付.getKey());

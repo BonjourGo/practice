@@ -25,7 +25,8 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>5.1.37</scope>
+            <scope>runtime</scope>
+<!--            <scope>5.1.37</scope>-->
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
