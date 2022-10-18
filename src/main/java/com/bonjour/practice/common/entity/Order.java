@@ -11,12 +11,12 @@ import java.math.BigDecimal;
 
 @Data
 @ApiModel("订单")
-@TableName("order")
+@TableName("order_info")
 public class Order {
 
-    @TableId("order_id")
+    @TableId("id")
     @ApiModelProperty("订单id")
-    private String OrderId;
+    private String orderId;
 
     @TableField("user_id")
     @ApiModelProperty("下单人id")
@@ -38,15 +38,15 @@ public class Order {
     @ApiModelProperty("支付金额")
     private BigDecimal payMoney;
 
-    @TableField("gendate")
+    @TableField("create_time")
     @ApiModelProperty("订单创建时间")
     private String createTime;
 
-    @TableField("paydate")
+    @TableField("pay_time")
     @ApiModelProperty("订单支付时间")
     private String payTime;
 
-    @TableField("canceldate")
+    @TableField("cancel_time")
     @ApiModelProperty("订单取消时间")
     private String cancelTime;
 }

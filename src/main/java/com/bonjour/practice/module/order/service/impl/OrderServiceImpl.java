@@ -41,11 +41,11 @@ public class OrderServiceImpl implements OrderService {
         Product product = commonService.getMapper(ProductMapper.class).selectById(order.getProductId());
         product.setStock(product.getStock() - order.getNumber());
         productMapper.updateById(product);
-        order.setUserId(UserUtil.getUser().getId());
+//        order.setUserId(UserUtil.getUser().getId());
         order.setOrderId(redisUtil.getIncrId("orderId"));
         order.setCreateTime(CommonUtils.getTimeStringNormal("yyyyMMddhhmmssSSS"));
         order.setOrderStatus(OrderStatusEnum.未支付.getKey());
         commonService.insert(order, OrderMapper.class);
-        rabbitMQProducer.sendDelayMsg(RabbitMQConfig.DELAY_EXCHANG_NAME, RabbitMQConfig.DELAY_ROUTTINGKEY, CommonUtils.beanToString(order), 1000 * 20);
+//        rabbitMQProducer.sendDelayMsg(RabbitMQConfig.DELAY_EXCHANG_NAME, RabbitMQConfig.DELAY_ROUTTINGKEY, CommonUtils.beanToString(order), 1000 * 20);
     }
 }

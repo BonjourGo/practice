@@ -1,7 +1,9 @@
 package com.bonjour.practice;
 
 import com.bonjour.practice.common.annotations.RepeatLimit;
+import com.bonjour.practice.common.entity.Order;
 import com.bonjour.practice.common.entity.User;
+import com.bonjour.practice.common.mapper.OrderMapper;
 import com.bonjour.practice.common.mapper.UserMapper;
 import com.bonjour.practice.common.utils.CommonUtils;
 import com.bonjour.practice.common.utils.RedisUtil;
@@ -29,6 +31,9 @@ import java.util.Date;
 public class TestController {
 
     @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
@@ -45,7 +50,7 @@ public class TestController {
 
     @GetMapping("/test")
     @ApiOperation("/test")
-    @RepeatLimit(timeOut = 5)
+    @RepeatLimit(timeOut = 1)
     public String test(HttpServletRequest request) {
         redisTemplate.opsForValue().set("aaa", "123");
         System.out.println(redisTemplate.opsForValue().get("aaa"));
@@ -53,6 +58,7 @@ public class TestController {
         System.out.println(redisUtil.getIncrId("bbb"));
         System.out.println(CommonUtils.getRequestIP(request));
         User user = userMapper.selectById("0001");
+        Order order = orderMapper.selectById(1);
         return CommonUtils.beanToString(user);
     }
 
