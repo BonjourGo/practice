@@ -43,6 +43,6 @@ public class Product {
     private BigDecimal finalPrice;
 
     @TableField("product_status")
-    @ApiModelProperty("产品状态")
+    @ApiModelProperty("产品状态 0 下架 1 正常 2 抢购 3 售罄")
     private String productStatus;
 }

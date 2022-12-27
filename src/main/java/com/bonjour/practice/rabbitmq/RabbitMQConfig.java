@@ -45,23 +45,23 @@ public class RabbitMQConfig {
     }
 
     // 延迟队列交换机
-    @Bean("delayExchange")
-    public CustomExchange delayExchange() {
-        Map<String, Object> args = new HashMap<>();
-        args.put("x-delayed-type", "direct");
-        // 交换机名称 交换机类型 是否持久化 是否自动删除 参数
-        return new CustomExchange(DELAY_EXCHANG_NAME, "x-delayed-message", true, false, args);
-    }
-
-    // 延迟队列
-    @Bean("delayQueue")
-    public Queue delayQueue() {
-        return QueueBuilder.durable(DELAY_QUEUE_NAME).build();
-    }
-
-    // 绑定延迟队列和交换机
-    @Bean
-    public Binding bindingDelay(@Qualifier("delayExchange") Exchange exchange, @Qualifier("delayQueue") Queue queue) {
-        return BindingBuilder.bind(queue).to(exchange).with(DELAY_ROUTTINGKEY).noargs();
-    }
+//    @Bean("delayExchange")
+//    public CustomExchange delayExchange() {
+//        Map<String, Object> args = new HashMap<>();
+//        args.put("x-delayed-type", "direct");
+//        // 交换机名称 交换机类型 是否持久化 是否自动删除 参数
+//        return new CustomExchange(DELAY_EXCHANG_NAME, "x-delayed-message", true, false, args);
+//    }
+//
+//    // 延迟队列
+//    @Bean("delayQueue")
+//    public Queue delayQueue() {
+//        return QueueBuilder.durable(DELAY_QUEUE_NAME).build();
+//    }
+//
+//    // 绑定延迟队列和交换机
+//    @Bean
+//    public Binding bindingDelay(@Qualifier("delayExchange") Exchange exchange, @Qualifier("delayQueue") Queue queue) {
+//        return BindingBuilder.bind(queue).to(exchange).with(DELAY_ROUTTINGKEY).noargs();
+//    }
 }

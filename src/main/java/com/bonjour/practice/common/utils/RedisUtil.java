@@ -3,12 +3,18 @@ package com.bonjour.practice.common.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
@@ -16,6 +22,7 @@ import redis.clients.jedis.JedisPool;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -257,7 +264,33 @@ public class RedisUtil {
      * @param key redis键
      * @return boolean
      */
-    public static boolean deleteObject(final String key) {
+    public boolean deleteObject(final String key) {
         return redisTemplate.delete(key);
     }
+
+    public Long descStock(Long productId) {
+        String id = "id_" + productId;
+        System.out.println(this.getCacheObject(id));
+        String script = "local isExist = redis.call('exists', KEYS[1]) if isExist == 1 then local goodsNumber = redis.call('get', KEYS[1]) if goodsNumber > \"0\" then redis.call('decr', KEYS[1]) return 1 else redis.call('del', KEYS[1]) return 0 end else return 2 end";
+        RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
+        Long result = (Long) redisTemplate.execute(redisScript, Arrays.asList(id));
+        return result;
+    }
+
+
+    /**
+     * -- 判断商品是否存在
+     * local isExist = redis.call('exists', KEYS[1])                 -- 判断商品是否存在
+     *     if isExist == 1 then
+     *         local goodsNumber = redis.call('get', KEYS[1])        -- 获取商品的数量
+     *         if goodsNumber > "0" then
+     *             redis.call('decr', KEYS[1])                       -- 如果商品数量大于0，则库存减1
+     *             return "success"
+     *         else
+     *             redis.call("del", KEYS[1])                        -- 商品数量为0则从秒杀活动删除该商品
+     *             return "fail"
+     *         end
+     *     else return "notfound"
+     * end
+     */
 }

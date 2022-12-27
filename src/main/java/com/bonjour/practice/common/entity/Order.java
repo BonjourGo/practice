@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 
 @Data
 @ApiModel("订单")
 @TableName("order_info")
+@Accessors(chain = true)
 public class Order {
 
     @TableId("id")

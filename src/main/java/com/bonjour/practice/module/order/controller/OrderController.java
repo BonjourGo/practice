@@ -32,4 +32,25 @@ public class OrderController {
         return Result.ok();
     }
 
+    @ApiOperation("抢购")
+    @PostMapping("/orderSpecial")
+    public Result orderSpecial(String phone, Long productId) {
+        orderService.orderSpecial(phone, productId);
+        return Result.ok();
+    }
+
+    @ApiOperation("抢购-redisson")
+    @PostMapping("/orderRedisson")
+    public Result orderRedisson(String phone, Long productId) {
+        orderService.orderForRedisson(phone, productId);
+        return Result.ok();
+    }
+
+    @ApiOperation("加载商品")
+    @PostMapping("/init")
+    public Result init() {
+        orderService.init();
+        return Result.ok();
+    }
+
 }

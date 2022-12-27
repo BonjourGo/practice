@@ -17,6 +17,13 @@ public class UserUtil {
     }
 
     public static User getUser() {
+        User user = userThreadLocal.get();
+        if (user == null) {
+            user = new User();
+            user.setId("test");
+            user.setPhone("123456789");
+            user.setNickName("bonjour");
+        }
         return userThreadLocal.get();
     }
 

@@ -9,4 +9,10 @@ public interface OrderService {
      * @param order
      */
     void order(Order order);
+
+    void orderSpecial(String phone, Long productId);
+
+    void orderForRedisson(String phone, Long productId);
+
+    void init();
 }
