@@ -1,6 +1,7 @@
 package com.bonjour.practice.common.interceptor;
 
 import com.bonjour.practice.common.annotations.Limiter;
+import com.bonjour.practice.common.utils.CommonUtils;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ public class LimiterInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
+            log.info("请求地址{}", CommonUtils.getRequestIP(request) + request.getRequestURI());
             // 如果是请求上的方法
             if (handler instanceof HandlerMethod) {
                 HandlerMethod handlerMethod = (HandlerMethod) handler;

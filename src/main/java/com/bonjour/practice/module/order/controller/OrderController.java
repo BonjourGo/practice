@@ -8,6 +8,7 @@ import com.bonjour.practice.module.order.service.OrderService;
 import com.google.common.util.concurrent.RateLimiter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @authur tc
  * @date 2022/10/9 15:43
  */
+@Slf4j
 @Api(tags = "下单controller")
 @RestController
 @RequestMapping("/order")
@@ -54,6 +56,20 @@ public class OrderController {
             throw new RuntimeException("操作太频繁了！");
         }
         return Result.ok();
+    }
+
+    public void test() {
+        final double isLimit = rateLimiter.acquire();
+        if (isLimit == 0) {
+            log.info("-----success-----");
+        } else {
+            log.info("-----fail-----");
+        }
+    }
+
+    @Limiter
+    public void test01() {
+        log.info("aaa");
     }
 
     @ApiOperation("加载商品")
