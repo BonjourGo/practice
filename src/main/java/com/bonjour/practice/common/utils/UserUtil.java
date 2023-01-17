@@ -12,6 +12,7 @@ public class UserUtil {
 
     private UserUtil() {}
 
+    // 放入user到Threadlocal
     public static void setUser(User user) {
         userThreadLocal.set(user);
     }
@@ -24,10 +25,12 @@ public class UserUtil {
             user.setPhone("123456789");
             user.setNickName("bonjour");
         }
-        return userThreadLocal.get();
+        return user;
     }
 
     public static void removeUser() {
-        userThreadLocal.remove();
+        if (userThreadLocal.get() != null) {
+            userThreadLocal.remove();
+        }
     }
 }

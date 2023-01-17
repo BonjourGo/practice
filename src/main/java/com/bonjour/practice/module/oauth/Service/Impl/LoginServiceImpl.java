@@ -1,4 +1,4 @@
-package com.bonjour.practice.module.oauth.service.Impl;
+package com.bonjour.practice.module.oauth.Service.Impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -8,7 +8,7 @@ import com.bonjour.practice.common.mapper.UserMapper;
 import com.bonjour.practice.common.service.CommonService;
 import com.bonjour.practice.common.utils.AESUtil;
 import com.bonjour.practice.common.utils.CommonUtils;
-import com.bonjour.practice.module.oauth.service.LoginService;
+import com.bonjour.practice.module.oauth.Service.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public User login(LoginDTO loginDTO) {
-        String password = loginDTO.getPassword();
-//        String password = AESUtil.encrypt(loginDTO.getPassword());
+//        String password = loginDTO.getPassword();
+        String password = AESUtil.encrypt(loginDTO.getPassword());
         User user = commonService.getMapper(UserMapper.class).query()
                 .eq("password", password)
                 .and(Wrapper -> Wrapper

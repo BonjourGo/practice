@@ -5,4 +5,8 @@
     <update id="updateStock">
         update product set stock = stock + #{number} where id = #{productId}
     </update>
+
+    <update id="updateStocks">
+        update product set stock = stock - 1 where id = #{id}
+    </update>
 </mapper>

@@ -1,4 +1,4 @@
-package com.bonjour.practice.module.oauth.service;
+package com.bonjour.practice.module.oauth.Service;
 
 import com.bonjour.practice.common.dto.LoginDTO;
 import com.bonjour.practice.common.entity.User;

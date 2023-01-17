@@ -270,11 +270,15 @@ public class RedisUtil {
 
     public Long descStock(Long productId) {
         String id = "id_" + productId;
-        System.out.println(this.getCacheObject(id));
+//        System.out.println(this.getCacheObject(id));
         String script = "local isExist = redis.call('exists', KEYS[1]) if isExist == 1 then local goodsNumber = redis.call('get', KEYS[1]) if goodsNumber > \"0\" then redis.call('decr', KEYS[1]) return 1 else redis.call('del', KEYS[1]) return 0 end else return 2 end";
         RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
         Long result = (Long) redisTemplate.execute(redisScript, Arrays.asList(id));
         return result;
+    }
+
+    public void decrId(String id) {
+        redisTemplate.opsForValue().decrement(id);
     }
 
 

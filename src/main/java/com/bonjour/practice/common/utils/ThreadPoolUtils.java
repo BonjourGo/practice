@@ -17,7 +17,7 @@ public class ThreadPoolUtils {
     // 核心线程数
     public static final int CORE_POOL_SIZE = Runtime.getRuntime().availableProcessors();
     // 最大线程数
-    public static final int MAX_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+    public static final int MAX_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2 + 1;
     // 线程最大存活时间
     public static final int KEEP_ALIVE_TIME = 1000;
     // 队列最大等待数
@@ -40,14 +40,16 @@ public class ThreadPoolUtils {
         }
     }
 
+    // 获取线程池
     public static ExecutorService getExector() {
-        return new ThreadPoolExecutor(
-                CORE_POOL_SIZE, // 核心线程数
-                MAX_POOL_SIZE, // 最大线程数
-                KEEP_ALIVE_TIME, // 空闲线程存活时间
-                TimeUnit.SECONDS, // 时间单位
-                new LinkedBlockingDeque<>(BLOCK_QUEUE_SIZE), // 阻塞队列
-                new ThreadPoolExecutor.CallerRunsPolicy());
+//        return new ThreadPoolExecutor(
+//                CORE_POOL_SIZE, // 核心线程数
+//                MAX_POOL_SIZE, // 最大线程数
+//                KEEP_ALIVE_TIME, // 空闲线程存活时间
+//                TimeUnit.SECONDS, // 时间单位
+//                new LinkedBlockingDeque<>(BLOCK_QUEUE_SIZE), // 阻塞队列
+//                new ThreadPoolExecutor.CallerRunsPolicy());
+        return getThreadPool();
     }
 
     /**

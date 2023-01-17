@@ -24,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(limiterInterceptor)
-                .addPathPatterns("/hello/**")
+//                .addPathPatterns("/hello/**")
                 .addPathPatterns("/order/**")
 //                .excludePathPatterns("/swagger-ui.html").excludePathPatterns()
         ;

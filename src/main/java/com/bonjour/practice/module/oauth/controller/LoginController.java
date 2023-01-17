@@ -6,7 +6,7 @@ import com.bonjour.practice.common.utils.CommonUtils;
 import com.bonjour.practice.common.utils.CookieUtil;
 import com.bonjour.practice.common.utils.RedisUtil;
 import com.bonjour.practice.common.utils.Result;
-import com.bonjour.practice.module.oauth.service.LoginService;
+import com.bonjour.practice.module.oauth.Service.LoginService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

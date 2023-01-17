@@ -44,13 +44,13 @@ public class RedissonConfig {
         return template;
     }
 
-//    @Bean
-//    public RedissonClient initRedisson() {
-//        Config config = new Config();
-//        config.useSingleServer()
-//                .setAddress("redis://127.0.0.1:6379")
+    @Bean
+    public RedissonClient initRedisson() {
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("redis://127.0.0.1:6379");
 //                .setPassword("");
-//        RedissonClient redissonClient = Redisson.create(config);
-//        return redissonClient;
-//    }
+        RedissonClient redissonClient = Redisson.create(config);
+        return redissonClient;
+    }
 }

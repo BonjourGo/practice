@@ -6,13 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 // 通用生产者发送消息
 @Slf4j
 @Service
 public class RabbitMQProducer {
 
     @Autowired
+    private RabbitMQCallback rabbitMQCallback;
+
+    @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @PostConstruct
+    public void initCallback() {
+        rabbitTemplate.setConfirmCallback(rabbitMQCallback);
+    }
+
+//    public void send
 
     public void sendDelayMsg(String exchangeName, String routingKey, Object msg, Integer delayTime) {
         log.info("发送消息 + " + msg);

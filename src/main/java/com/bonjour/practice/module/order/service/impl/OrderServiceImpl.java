@@ -41,10 +41,10 @@ public class OrderServiceImpl implements OrderService {
     private CommonService commonService;
 
     @Autowired
-    private RabbitMQProducer rabbitMQProducer;
+    private RedissonClient redissonClient;
 
     @Autowired
-//    private RedissonClient redissonClient;
+    private RabbitMQProducer rabbitMQProducer;
 
     private static Map<String, Boolean> map = new HashMap<>();
 
@@ -73,12 +73,13 @@ public class OrderServiceImpl implements OrderService {
         if (map.containsKey(phone) && map.get(phone)) {
             throw new RuntimeException("do not repeat order!");
         }
+        // redis 减库存
         Long result = redisUtil.descStock(productId);
         if (result == 1L) {
             // success
             Product product = commonService.getMapper(ProductMapper.class).selectById(productId);
             if (product == null) {
-                redisUtil.deleteObject("id_" + product.getId());
+                redisUtil.deleteObject("id_" + productId);
                 throw new RuntimeException("当前商品已下架！换个其他商品吧！");
             }
             if (product.getStock() < 1) {
@@ -96,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
             product.setStock(product.getStock() - 1);
             commonService.updateAllById(product, ProductMapper.class);
             map.put(phone, true);
+            rabbitMQProducer.sendDelayMsg(RabbitMQConfig.DELAY_EXCHANG_NAME, RabbitMQConfig.DELAY_ROUTTINGKEY, CommonUtils.beanToString(order), 30 * 60);
         } else if (result == 2L) {
             throw new RuntimeException("当前商品已下架，换个商品吧");
         }
@@ -108,34 +110,35 @@ public class OrderServiceImpl implements OrderService {
         if (map.containsKey(phone) && map.get(phone)) {
             throw new RuntimeException("do not repeat order!");
         }
-//        RLock lock = redissonClient.getLock(phone + productId + "lock");
-//        try {
-//            boolean isLock = lock.tryLock(20, 10, TimeUnit.SECONDS);
-//            if (isLock) {
-//                log.info("加锁成功！");
-//                Product product = commonService.getMapper(ProductMapper.class).selectById(productId);
-//                if (product == null || product.getStock() < 1 ) {
-//                    throw new RuntimeException("当前商品已下架！换个其他商品吧！");
-//                }
-//                Order order = new Order();
-//                order.setOrderId(redisUtil.getIncrIdString("orderId"));
-//                order.setCreateTime(CommonUtils.getTimeStringNormal("yyyyMMddhhmmssSSS"));
-//                order.setOrderStatus(OrderStatusEnum.未支付.getKey());
-//                order.setProductId(productId);
-//                order.setNumber(1);
-//                order.setUserId(UserUtil.getUser().getId());
-//                commonService.insert(order, OrderMapper.class);
-//                product.setStock(product.getStock() - 1);
-//                commonService.updateAllById(product, ProductMapper.class);
-//                map.put(phone, true);
-//            } else {
-//                throw new RuntimeException("加锁失败！");
-//            }
-//        } catch (Exception e) {
-//            throw new RuntimeException(e.toString());
-//        } finally {
-//            lock.unlock();
-//        }
+        RLock lock = redissonClient.getLock(phone + productId + "lock");
+        try {
+            boolean isLock = lock.tryLock(20, 10, TimeUnit.SECONDS);
+            if (isLock) {
+                log.info("加锁成功！");
+                Product product = commonService.getMapper(ProductMapper.class).selectById(productId);
+                if (product == null || product.getStock() < 1 ) {
+                    throw new RuntimeException("当前商品已下架！换个其他商品吧！");
+                }
+                Order order = new Order();
+                order.setOrderId(redisUtil.getIncrIdString("orderId"));
+                order.setCreateTime(CommonUtils.getTimeStringNormal("yyyyMMddhhmmssSSS"));
+                order.setOrderStatus(OrderStatusEnum.未支付.getKey());
+                order.setProductId(productId);
+                order.setNumber(1);
+                order.setUserId(UserUtil.getUser().getId());
+                commonService.insert(order, OrderMapper.class);
+                product.setStock(product.getStock() - 1);
+                commonService.updateAllById(product, ProductMapper.class);
+                map.put(phone, true);
+            } else {
+                log.error("抢购加锁失败！");
+                throw new RuntimeException("系统繁忙请稍后再试！");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.toString());
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -149,7 +152,6 @@ public class OrderServiceImpl implements OrderService {
                 } catch (Exception e) {
                     throw new RuntimeException(e.toString());
                 }
-
             }
         }
     }

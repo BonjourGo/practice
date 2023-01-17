@@ -17,4 +17,10 @@ public interface ProductMapper extends BaseMapperPro<Product> {
      * @param productId
      */
     void updateStock(@Param("number") Integer number, @Param("productId") Long productId);
+
+    /**
+     *
+     * @param id
+     */
+    void updateStocks(@Param("id") Long id);
 }
