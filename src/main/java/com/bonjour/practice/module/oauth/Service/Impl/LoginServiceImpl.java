@@ -8,16 +8,25 @@ import com.bonjour.practice.common.mapper.UserMapper;
 import com.bonjour.practice.common.service.CommonService;
 import com.bonjour.practice.common.utils.AESUtil;
 import com.bonjour.practice.common.utils.CommonUtils;
+import com.bonjour.practice.common.utils.RedisUtil;
 import com.bonjour.practice.module.oauth.Service.LoginService;
+import jdk.internal.dynalink.linker.LinkerServices;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Autowired
     private CommonService commonService;
@@ -35,6 +44,9 @@ public class LoginServiceImpl implements LoginService {
         if (user == null) {
             throw new RuntimeException("账号或密码错误！");
         }
+        String uuid = UUID.randomUUID().toString();
+        System.out.println(uuid);
+        redisUtil.setCacheObject(uuid, CommonUtils.beanToString(user));
         return user;
     }
 }

@@ -60,6 +60,6 @@ public class LimiterInterceptor implements HandlerInterceptor {
         } catch (Exception e) {
             throw new RuntimeException("网络繁忙，请稍后重试！");
         }
-        return false;
+        return true;
     }
 }

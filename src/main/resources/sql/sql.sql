@@ -22,3 +22,24 @@ CREATE TABLE `user` (
                         `password` varchar(255) DEFAULT NULL,
                         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+
+
+CREATE TABLE `red_packet` (
+                        `id` varchar(32) NOT NULL COMMENT 'id',
+                        `number` int(8) NOT NULL,
+                        `total_money` decimal(16, 2) NOT NULL,
+                        `type` varchar(1) DEFAULT NULL,
+                        `status` varchar(1) DEFAULT NULL,
+                        `send_time` date COMMENT '时间',
+                        PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+
+CREATE TABLE `red_packet_info` (
+                              `id` varchar(32) NOT NULL COMMENT 'id',
+                              `packet_id` varchar(32) NOT NULL,
+                              `user_id` varchar(32) NOT NULL,
+                              `money` decimal(16, 2) DEFAULT NULL,
+                              `status` varchar(1) DEFAULT NULL,
+                              `get_time` date COMMENT '时间',
+                              PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
