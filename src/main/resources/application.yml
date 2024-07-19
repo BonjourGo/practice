@@ -1,65 +1,77 @@
 spring:
-  quartz:
-    #相关属性配置
-    properties:
-      org:
-        quartz:
-          scheduler:
-            instanceName: clusteredScheduler
-            instanceId: AUTO
-          jobStore:
-            class: org.quartz.impl.jdbcjobstore.JobStoreTX
-            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-            tablePrefix: TEST_
-            isClustered: true
-            clusterCheckinInterval: 10000
-            useProperties: false
-            dataSource: practice
-          threadPool:
-            class: org.quartz.simpl.SimpleThreadPool
-            threadCount: 10
-            threadPriority: 5
-            threadsInheritContextClassLoaderOfInitializingThread: true
-    #数据库方式
-    job-store-type: jdbc
-  rabbitmq:
-    host: localhost
-    port: 5672
-    virtual-host: /
-    username: guest
-    password: guest
-    listener:
-      simple:
-        prefetch: 1 # 每次从mq获取的消息数量
-        concurrency: 1 # 每个队列的消费者数量
-        max-concurrency: 1 # 每个队列最大的消费者数量
-        acknowledge-mode: manual # 手动签收
-    connection-timeout: 15000
-    publisher-confirms: true # 发送确认
-    publisher-returns: true # 失败回调
-    template:
-      mandatory: true # 设置为true 消息路由失败通知监听者
+  elasticsearch:
+    cluster-name: elasticsearch
+    cluster-nodes: 127.0.0.1:9200
+#  quartz:
+#    #相关属性配置
+#    properties:
+#      org:
+#        quartz:
+#          scheduler:
+#            instanceName: clusteredScheduler
+#            instanceId: AUTO
+#          jobStore:
+#            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+#            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+#            tablePrefix: TEST_
+#            isClustered: true
+#            clusterCheckinInterval: 10000
+#            useProperties: false
+#            dataSource: practice
+#          threadPool:
+#            class: org.quartz.simpl.SimpleThreadPool
+#            threadCount: 10
+#            threadPriority: 5
+#            threadsInheritContextClassLoaderOfInitializingThread: true
+#    #数据库方式
+#    job-store-type: jdbc
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    virtual-host: /
+#    username: guest
+#    password: guest
+#    listener:
+#      simple:
+#        prefetch: 1 # 每次从mq获取的消息数量
+#        concurrency: 1 # 每个队列的消费者数量
+#        max-concurrency: 1 # 每个队列最大的消费者数量
+#        acknowledge-mode: manual # 手动签收
+#    connection-timeout: 15000
+#    publisher-confirms: true # 发送确认
+#    publisher-returns: true # 失败回调
+#    template:
+#      mandatory: true # 设置为true 消息路由失败通知监听者
   datasource:
     druid:
       initialSize: 5
       minIdle: 5
       maxActive: 20
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/practice?allowMultiQueries=true&rewriteBatchedStatements=true&serverTimezone=GMT%2B8
     username: root
-    password: root
-#    password: root123
+#    password: root
+    password: root123
   redis:
     host: localhost
     port: 6379
     password:
     database: 0
+doublecache:
+  allowNull: true
+  init: 128
+  max: 1024
+  expireAfterWrite: 120  #Caffeine过期时间
+  redisExpire: 180
+#    jest:
+#      uris: 127.0.0.1:9200
 #    cluster:
 #      nodes: #节点配置数量小于等于1时,将默认连接上述host和port配置的redis
 #        - 127.0.0.1:6379
 #      #        - 172.34.7.112:6379
 #      maxRedirects: 3  # 获取失败 最大重定向次数
+# ghp_BVAUevxFAKESKCXXDucLcRUC5FpYAm3O4579sTq
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

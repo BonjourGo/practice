@@ -1,12 +1,12 @@
 package com.bonjour.practice.module.redpacket.service.impl;
 
+import com.bonjour.practice.common.entity.Product;
 import com.bonjour.practice.common.entity.RedPacket;
 import com.bonjour.practice.common.mapper.RedPacketMapper;
 import com.bonjour.practice.common.service.CommonService;
 import com.bonjour.practice.common.utils.CommonUtils;
 import com.bonjour.practice.common.utils.RedisUtil;
 import com.bonjour.practice.module.redpacket.service.RedPacketService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
@@ -17,11 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @authur tc
@@ -53,7 +51,7 @@ public class RedPacketServiceImpl implements RedPacketService {
         redPacket.setId(id);
         redPacket.setSendTime(new Date());
         redPacket.setLastMoney(redPacket.getTotalMoney());
-        commonService.insert(redPacket, RedPacketMapper.class);
+//        commonService.insert(redPacket, RedPacketMapper.class);
         try {
 //            redisUtil.setCacheObjectAndExpire(redPacket.getId(), CommonUtils.beanToString(redPacket), 24 * 60 * 60, TimeUnit.SECONDS);
             redisUtil.setCacheObject(redPacket.getId(), CommonUtils.beanToString(redPacket));
@@ -81,6 +79,10 @@ public class RedPacketServiceImpl implements RedPacketService {
                 if (redPacket == null) {
                     throw new RuntimeException("红包去火星了。");
                 }
+                if (redPacket.getIds().contains(userId)) {
+                    log.info("抢过了！");
+                    return new BigDecimal("0.00");
+                }
                 if (System.currentTimeMillis() - redPacket.getSendTime().getTime() > 24 * 60 * 60 * 1000) {
                     throw new RuntimeException("红包已过期。");
                 }
@@ -101,29 +103,6 @@ public class RedPacketServiceImpl implements RedPacketService {
                 redPacket.setLastMoney(redPacket.getLastMoney().subtract(min));
                 redisUtil.setCacheObject(packetId, CommonUtils.beanToString(redPacket));
                 System.out.println("抢到了【" + min + "】");
-                /**
-                 *     BigDecimal remain = amount.subtract(min.multiply(num));
-                 *     final Random random = new Random();
-                 *     final BigDecimal hundred = new BigDecimal("100");
-                 *     final BigDecimal two = new BigDecimal("2");
-                 *     BigDecimal sum = BigDecimal.ZERO;
-                 *     BigDecimal redpeck;
-                 *     for (int i = 0; i < num.intValue(); i++) {
-                 *         final int nextInt = random.nextInt(100);
-                 *         if(i == num.intValue() -1){
-                 *             redpeck = remain;
-                 *         }else{
-                 *             redpeck = new BigDecimal(nextInt).multiply(remain.multiply(two).divide(num.subtract(new BigDecimal(i)),2,RoundingMode.CEILING)).divide(hundred,2, RoundingMode.FLOOR);
-                 *         }
-                 *         if(remain.compareTo(redpeck) > 0){
-                 *             remain = remain.subtract(redpeck);
-                 *         }else{
-                 *             remain = BigDecimal.ZERO;
-                 *         }
-                 *         sum = sum.add(min.add(redpeck));
-                 *         System.out.println("第"+(i+1)+"个人抢到红包金额为："+min.add(redpeck));
-                 *     }
-                 */
             } else {
                 log.error("{}加锁失败", packetId);
                 throw new RuntimeException("系统繁忙！");
@@ -147,13 +126,84 @@ public class RedPacketServiceImpl implements RedPacketService {
         Random random = new Random();
         final int nextInt = random.nextInt(100);
         result = new BigDecimal(nextInt).multiply(last.multiply(new BigDecimal("2"))
-                .divide(new BigDecimal(n), 2, RoundingMode.CEILING))
+                .divide(new BigDecimal(num), 2, RoundingMode.CEILING))
                 .divide(new BigDecimal("100.00"), 2, RoundingMode.FLOOR);
         return result;
     }
 
+    public static List<BigDecimal> splitPackets(Integer num, BigDecimal amount) {
+        List<BigDecimal> list = new ArrayList<>();
+        log.info("【" + num + "】，" );
+        if (num == 1) {
+            list.add(amount);
+            return list;
+        }
+        for (Integer integer = 0; integer < num; integer++) {
+            Integer count = num - integer;
+            if (count == 1) {
+                System.out.println("第" + (integer + 1)  + "次【" + amount + "】" + "剩余【" + "0" + "】");
+                list.add(amount);
+                break;
+            }
+            BigDecimal result = new BigDecimal("0.00");
+            String n = String.valueOf(count - 1);
+            BigDecimal min = new BigDecimal("0.01").multiply(new BigDecimal(n));
+            BigDecimal last = amount.subtract(min);
+            Random random = new Random();
+            final int nextInt = random.nextInt(100);
+            result = new BigDecimal(nextInt).multiply(
+                    last.multiply(new BigDecimal("2")).divide(new BigDecimal(count), 2, RoundingMode.CEILING)
+                    )
+                    .divide(new BigDecimal("100.00"), 2, RoundingMode.FLOOR);
+            amount = amount.subtract(result);
+            list.add(result);
+            System.out.println("第" + (integer + 1)  + "次【" + result + "】" + "剩余【" +amount + "】");
+        }
+        return list;
+    }
+
+    public static volatile long a = 0;
+    public static AtomicLong atomicLong = new AtomicLong(0);
     public static void main(String[] args) {
-        int nest = new Random().nextInt(100);
-        System.out.println(splitPacket(5, new BigDecimal("100.00")));
+//        ConcurrentHashMap concurrentHashMap = new ConcurrentHashMap();
+//        concurrentHashMap.size();
+//        HashMap hashMap = new HashMap();
+//        hashMap.size();
+////        int nest = new Random().nextInt(100);
+////        System.out.println(splitPackets(5, new BigDecimal("100.00")));
+//        for (int i = 0; i < 5000; i++) {
+//            new Thread(() -> {
+//                atomicLong.incrementAndGet();
+//            }).start();
+//        }
+//        try {
+//            Thread.sleep(2000);
+//        } catch (Exception e) {
+//
+//        }
+//        System.out.println(atomicLong);
+        System.out.println(10 >> 1);
+        LinkedList list = new LinkedList();
+        List<String> list1 = new ArrayList<>();
+        list1.add("a");
+        list1.add("b");
+        list1.add("c");
+//        for (String s : list1) {
+//            list1.remove(s);
+//        }
+        Iterator<String> iterator = list1.iterator();
+//        Iterable
+        while (iterator.hasNext()) {
+            if ("c".equals(iterator.next())) {
+                iterator.remove();
+                break;
+            }
+        }
+        System.out.println(list1);
+        Product product = new Product();
+        product.setId(1L);
+        Product product1 = new Product();
+        product1.setId(2L);
+        System.out.println(product.equals(product1));
     }
 }

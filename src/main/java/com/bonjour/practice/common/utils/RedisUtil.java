@@ -2,6 +2,7 @@ package com.bonjour.practice.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
@@ -20,11 +21,10 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.nio.channels.Selector;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,6 +40,8 @@ public class RedisUtil {
     private static final String SET_IF_NOT_EXIST = "NX";
     private static final String SET_WITH_EXPIRE_TIME = "PX";
     private static final Long RELEASE_SUCCESS = 1L;
+
+    private static final String RELEASE_LOCK_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 
     @Autowired
     private static RedisTemplate redisTemplate;
@@ -235,13 +237,45 @@ public class RedisUtil {
         return result;
     }
 
+    public <T> void setForHash(final String key, Map<String, Object> map) {
+        redisTemplate.opsForHash().putAll(key, map);
+    }
+
+    public <T> Object getKeyForHash(final String key) {
+        Object object = redisTemplate.opsForHash().entries(key);
+        return object;
+    }
+
+    public <T> Object getKeyForHashField(final String key, String fieldName) {
+        Object object = redisTemplate.opsForHash().get(key, fieldName);
+        return object;
+    }
+
+    public <T> void setKeyLeftForList(final String key, String value) {
+        long l = redisTemplate.opsForList().leftPush(key, value);
+        System.out.println(l);
+    }
+
+    public List getIndex(String key) {
+        List list = redisTemplate.opsForList().range(key, 0, -1);
+        return list;
+    }
+
+    public <T> Object getKeyRightForList(final String key) {
+        Object object = redisTemplate.opsForList().rightPop(key);
+        return object;
+    }
+    //
+    public void removeKeyForList(String key, String value) {
+        redisTemplate.opsForList().remove(key, 0, value);
+    }
+
     public boolean isNull(String key) {
-        String b = redisTemplate.opsForValue().get(key).toString();
-        if (StringUtils.isBlank(b)) {
-            return false;
-        } else {
-            return true;
-        }
+        return redisTemplate.hasKey(key);
+    }
+
+    public void setKeyExpire(String key, Long time) {
+        redisTemplate.expire(key, time, TimeUnit.SECONDS);
     }
 
 
@@ -250,7 +284,7 @@ public class RedisUtil {
      * @param key
      * @return
      */
-    public Long getIncrLongId(String key) {
+    public static Long getIncrLongId(String key) {
         return (Long) redisTemplate.execute((RedisCallback<Long>) connection -> {
             RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
             byte[] keys = serializer.serialize("sequence:id_" + key);
@@ -297,4 +331,34 @@ public class RedisUtil {
      *     else return "notfound"
      * end
      */
+
+    public static void stringJug(String s, String message) {
+        if (StringUtils.isBlank(s)) {
+            throw new RuntimeException(message);
+        }
+    }
+
+    public void setValue(T t) {
+
+    }
+
+    public static Boolean tryLock(String key, String value, Long seconds) {
+        try {
+            return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, value, seconds, TimeUnit.SECONDS));
+        } catch (Exception e) {
+            log.error("获取redis锁异常", e);
+            return false;
+        }
+    }
+
+    public static boolean releaseLock(String lockKey, String lockValue) {
+        try {
+            RedisScript<Boolean> redisScript = RedisScript.of(RELEASE_LOCK_SCRIPT, Boolean.class);
+            Boolean result = (Boolean) redisTemplate.execute(redisScript, Collections.singletonList(lockKey), lockValue);
+            return Boolean.TRUE.equals(result);
+        } catch (Exception e) {
+            log.error("删除redis锁异常", e);
+            return false;
+        }
+    }
 }
