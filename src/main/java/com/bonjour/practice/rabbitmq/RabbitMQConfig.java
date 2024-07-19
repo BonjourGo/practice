@@ -5,13 +5,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * rabbitMQ 配置类
  */
-@Configuration
+//@Configuration
 public class RabbitMQConfig {
 
     public static final String EXCHANGE_NORMAL_NAME = "normal_exchange";
@@ -64,4 +66,19 @@ public class RabbitMQConfig {
 //    public Binding bindingDelay(@Qualifier("delayExchange") Exchange exchange, @Qualifier("delayQueue") Queue queue) {
 //        return BindingBuilder.bind(queue).to(exchange).with(DELAY_ROUTTINGKEY).noargs();
 //    }
+
+    public static String parseDate(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        String day = "";
+        try {
+            day = simpleDateFormat.format(date);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return day;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(parseDate(new Date()));
+    }
 }

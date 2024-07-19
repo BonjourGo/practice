@@ -9,4 +9,6 @@ public interface ProductService {
      * @param product
      */
     void addProduct(Product product);
+
+    Product getById(Long id);
 }

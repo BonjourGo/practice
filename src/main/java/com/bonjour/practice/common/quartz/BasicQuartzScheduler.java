@@ -20,7 +20,7 @@ import java.util.*;
  * @date 2023/2/14 9:47
  */
 @Slf4j
-@Configuration
+//@Configuration
 public class BasicQuartzScheduler {
 
 

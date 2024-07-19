@@ -17,12 +17,12 @@ import java.util.UUID;
 @RequestMapping("/quartz")
 public class QuartzController {
 
-    @Autowired
-    private BasicQuartzScheduler basicQuartzScheduler;
+//    @Autowired
+//    private BasicQuartzScheduler basicQuartzScheduler;
 
     @ApiOperation("/add")
     @GetMapping("/add")
     public void add(String time, String name) throws SchedulerException {
-        basicQuartzScheduler.addJob(TestQuartz.class, name, "test", time);
+//        basicQuartzScheduler.addJob(TestQuartz.class, name, "test", time);
     }
 }

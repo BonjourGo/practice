@@ -79,25 +79,25 @@ public class OrderServiceImpl implements OrderService {
             // success
             Product product = commonService.getMapper(ProductMapper.class).selectById(productId);
             if (product == null) {
-                redisUtil.deleteObject("id_" + productId);
-                throw new RuntimeException("当前商品已下架！换个其他商品吧！");
+//                redisUtil.deleteObject("id_" + productId);
+//                throw new RuntimeException("当前商品已下架！换个其他商品吧！");
             }
-            if (product.getStock() < 1) {
-                redisUtil.deleteObject("id_" + product.getId());
-                throw new RuntimeException("当前商品已抢购完，试试其他商品吧！");
-            }
-            Order order = new Order();
-            order.setOrderId(redisUtil.getIncrIdString("orderId"));
-            order.setCreateTime(CommonUtils.getTimeStringNormal("yyyyMMddhhmmssSSS"));
-            order.setOrderStatus(OrderStatusEnum.未支付.getKey());
-            order.setProductId(productId);
-            order.setNumber(1);
-            order.setUserId(UserUtil.getUser().getId());
-            commonService.insert(order, OrderMapper.class);
+//            if (product.getStock() < 1) {
+//                redisUtil.deleteObject("id_" + product.getId());
+//                throw new RuntimeException("当前商品已抢购完，试试其他商品吧！");
+//            }
+//            Order order = new Order();
+//            order.setOrderId(redisUtil.getIncrIdString("orderId"));
+//            order.setCreateTime(CommonUtils.getTimeStringNormal("yyyyMMddhhmmssSSS"));
+//            order.setOrderStatus(OrderStatusEnum.未支付.getKey());
+//            order.setProductId(productId);
+//            order.setNumber(1);
+//            order.setUserId(UserUtil.getUser().getId());
+//            commonService.insert(order, OrderMapper.class);
             product.setStock(product.getStock() - 1);
             commonService.updateAllById(product, ProductMapper.class);
             map.put(phone, true);
-            rabbitMQProducer.sendDelayMsg(RabbitMQConfig.DELAY_EXCHANG_NAME, RabbitMQConfig.DELAY_ROUTTINGKEY, CommonUtils.beanToString(order), 30 * 60);
+//            rabbitMQProducer.sendDelayMsg(RabbitMQConfig.DELAY_EXCHANG_NAME, RabbitMQConfig.DELAY_ROUTTINGKEY, CommonUtils.beanToString(order), 30 * 60);
         } else if (result == 2L) {
             throw new RuntimeException("当前商品已下架，换个商品吧");
         }
@@ -110,7 +110,8 @@ public class OrderServiceImpl implements OrderService {
         if (map.containsKey(phone) && map.get(phone)) {
             throw new RuntimeException("do not repeat order!");
         }
-        RLock lock = redissonClient.getLock(phone + productId + "lock");
+        // 加锁锁商品id，加上电话库存减少的会小于实际卖掉的
+        RLock lock = redissonClient.getLock(productId + "lock");
         try {
             boolean isLock = lock.tryLock(20, 10, TimeUnit.SECONDS);
             if (isLock) {
@@ -126,9 +127,9 @@ public class OrderServiceImpl implements OrderService {
                 order.setProductId(productId);
                 order.setNumber(1);
                 order.setUserId(UserUtil.getUser().getId());
-                commonService.insert(order, OrderMapper.class);
+//                commonService.insert(order, OrderMapper.class);
                 product.setStock(product.getStock() - 1);
-                commonService.updateAllById(product, ProductMapper.class);
+                commonService.updateById(product, ProductMapper.class);
                 map.put(phone, true);
             } else {
                 log.error("抢购加锁失败！");

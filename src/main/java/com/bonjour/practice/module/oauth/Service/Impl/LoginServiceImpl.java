@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -48,5 +49,10 @@ public class LoginServiceImpl implements LoginService {
         System.out.println(uuid);
         redisUtil.setCacheObject(uuid, CommonUtils.beanToString(user));
         return user;
+    }
+
+    public static void main(String[] args) {
+        String time = "2023-06";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("");
     }
 }

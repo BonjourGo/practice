@@ -3,6 +3,8 @@ package com.bonjour.practice.module.order.controller;
 import com.bonjour.practice.common.annotations.Limiter;
 import com.bonjour.practice.common.annotations.RepeatLimit;
 import com.bonjour.practice.common.entity.Order;
+import com.bonjour.practice.common.entity.Product;
+import com.bonjour.practice.common.mapper.ProductMapper;
 import com.bonjour.practice.common.utils.Result;
 import com.bonjour.practice.module.order.service.OrderService;
 import com.google.common.util.concurrent.RateLimiter;
@@ -40,7 +42,7 @@ public class OrderController {
 
     @ApiOperation("抢购")
     @PostMapping("/orderSpecial")
-    @Limiter
+//    @Limiter
     public Result orderSpecial(String phone, Long productId) {
         orderService.orderSpecial(phone, productId);
         return Result.ok();
@@ -48,13 +50,15 @@ public class OrderController {
 
     @ApiOperation("抢购-redisson")
     @PostMapping("/orderRedisson")
+    @Limiter(QPS = 20)
     public Result orderRedisson(String phone, Long productId) {
-        final double isLimit = rateLimiter.acquire();
-        if (isLimit == 0) {
-            orderService.orderForRedisson(phone, productId);
-        } else {
-            throw new RuntimeException("操作太频繁了！");
-        }
+        orderService.orderForRedisson(phone, productId);
+//        final double isLimit = rateLimiter.acquire();
+//        if (isLimit == 0) {
+//            orderService.orderForRedisson(phone, productId);
+//        } else {
+//            throw new RuntimeException("操作太频繁了！");
+//        }
         return Result.ok();
     }
 
@@ -77,6 +81,15 @@ public class OrderController {
     public Result init() {
         orderService.init();
         return Result.ok();
+    }
+
+    @Autowired
+    private ProductMapper productMapper;
+    @ApiOperation("加载商品")
+    @PostMapping("/initPro")
+    public Result initPro(@RequestBody Product product) {
+        Product product1 =productMapper.selectById(product.getId());
+        return Result.ok(product1);
     }
 
 }
