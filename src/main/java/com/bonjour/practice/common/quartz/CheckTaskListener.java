@@ -17,26 +17,26 @@ import java.util.List;
  * @date 2023/2/14 10:00
  */
 @Slf4j
-@Configuration
+//@Configuration
 public class CheckTaskListener implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
     private CommonService commonService;
 
-    private BasicQuartzScheduler basicQuartzScheduler;
+//    private BasicQuartzScheduler basicQuartzScheduler;
 
-    @Autowired
-    public CheckTaskListener(BasicQuartzScheduler basicQuartzScheduler) {
-        this.basicQuartzScheduler = basicQuartzScheduler;
-    }
-
+//    @Autowired
+//    public CheckTaskListener(BasicQuartzScheduler basicQuartzScheduler) {
+//        this.basicQuartzScheduler = basicQuartzScheduler;
+//    }
+//
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        try {
-            log.info("定时任务已开启-------");
-            basicQuartzScheduler.startJob();
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            log.info("定时任务已开启-------");
+////            basicQuartzScheduler.startJob();
+//        } catch (SchedulerException e) {
+//            e.printStackTrace();
+//        }
     }
 }

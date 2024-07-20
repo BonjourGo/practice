@@ -52,9 +52,10 @@ public class RepeatLimitAOP {
         }
         // 获取请求路径
         String path = request.getServletPath();
+        String token = request.getHeader("Authorization");
         // 完整请求路径
-        String requestPath = ip + path;
-        log.info(requestPath);
+        String requestPath = ip + path + token;
+        log.info("请求路径{}", requestPath);
         // 获取uuid
         String uuid = CommonUtils.getUUID();
         // 从redis获取值

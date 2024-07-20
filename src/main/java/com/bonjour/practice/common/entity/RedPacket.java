@@ -1,5 +1,6 @@
 package com.bonjour.practice.common.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -9,6 +10,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @authur tc
@@ -19,7 +21,7 @@ import java.util.Date;
 @TableName("red_packet")
 public class RedPacket {
 
-    @TableId("id")
+    @TableId(value = "id", type = IdType.INPUT)
     @ApiModelProperty("主键")
     private String id;
 
@@ -43,15 +45,19 @@ public class RedPacket {
     @ApiModelProperty("红包类型 1 拼运气 2 平均 3 定向")
     private String type;
 
-    @TableField("")
-    @ApiModelProperty("")
+    @TableField("status")
+    @ApiModelProperty("status")
     private String status;
 
-    @TableField("")
-    @ApiModelProperty("")
+    @TableField("send_time")
+    @ApiModelProperty("sendTime")
     private Date sendTime;
 
-    @TableField("")
-    @ApiModelProperty("")
-    private String user_id;
+    @TableField("user_id")
+    @ApiModelProperty("userId")
+    private String userId;
+
+    @TableField(exist = false)
+    @ApiModelProperty("list")
+    private List<String> ids;
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @date 2023/1/12 10:59
  */
 @Slf4j
-@Component
+//@Component
 public class RabbitMQCallback implements RabbitTemplate.ConfirmCallback {
 
 

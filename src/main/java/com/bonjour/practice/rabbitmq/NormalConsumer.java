@@ -24,7 +24,7 @@ import java.util.Map;
  * normal 消费者
  */
 @Slf4j
-@Component
+//@Component
 public class NormalConsumer {
 
     @Autowired

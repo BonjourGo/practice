@@ -13,16 +13,16 @@ import javax.annotation.PostConstruct;
 @Service
 public class RabbitMQProducer {
 
-    @Autowired
-    private RabbitMQCallback rabbitMQCallback;
+//    @Autowired
+//    private RabbitMQCallback rabbitMQCallback;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @PostConstruct
-    public void initCallback() {
-        rabbitTemplate.setConfirmCallback(rabbitMQCallback);
-    }
+//    @PostConstruct
+//    public void initCallback() {
+//        rabbitTemplate.setConfirmCallback(rabbitMQCallback);
+//    }
 
 //    public void send
 

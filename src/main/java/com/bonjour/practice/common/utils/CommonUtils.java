@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSON;
 import com.bonjour.practice.common.enums.RegisterTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -123,6 +125,11 @@ public class CommonUtils {
         System.out.println(date);
         System.out.println(RegisterTypeEnum.账号密码.getKey());
         System.out.println(RegisterTypeEnum.账号密码.getdesc());
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+        // 获取请求ip
+        String ip = CommonUtils.getRequestIP(request);
+        System.out.println(ip);
     }
 
 }

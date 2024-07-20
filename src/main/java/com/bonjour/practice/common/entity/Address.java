@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
  * @authur tc
  * @date 2022/10/18 17:09
  */
+@Builder
 @Data
 @ApiModel("地址")
 @TableName("address")

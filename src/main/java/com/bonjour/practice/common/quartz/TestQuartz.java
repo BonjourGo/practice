@@ -1,9 +1,12 @@
 package com.bonjour.practice.common.quartz;
 
 import com.bonjour.practice.common.entity.JobTasks;
+import com.bonjour.practice.common.entity.User;
 import com.bonjour.practice.common.mapper.JobTasksMapper;
 import com.bonjour.practice.common.service.CommonService;
+import com.bonjour.practice.common.utils.UserUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -32,5 +35,11 @@ public class TestQuartz implements Job {
                 commonService.updateById(jobTasks, JobTasksMapper.class);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        User user = new User();
+        user.setPassword(null);
+        System.out.println(StringUtils.isNotBlank(user.getPassword()));
     }
 }
