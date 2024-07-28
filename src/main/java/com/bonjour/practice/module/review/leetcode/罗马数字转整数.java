@@ -42,6 +42,7 @@ public class 罗马数字转整数 {
             case "V":
                 return 5;
         }
+        return 0;
     }
 
     public static enum Enums {
